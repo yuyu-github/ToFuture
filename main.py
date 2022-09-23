@@ -1,4 +1,7 @@
+import sys
 from tkinter import *
+
+from file import load
 
 def create_new(event = None):
   pass
@@ -34,10 +37,8 @@ menu_file.bind_all('<Control-s>', save)
 menu_file.bind_all('<Control-Shift-S>', save_as)
 
 menu_edit = Menu(menubar, tearoff=False)
-menu_edit.add_command(label='プロジェクト設定', accelerator='Ctrl+P', command=project_settings)
-menu_edit.add_command(label='質問設定', accelerator='Ctrl+Q', command=question_settings)
+menu_edit.add_command(label='ファイル設定', accelerator='Ctrl+P', command=project_settings)
 menu_edit.bind_all('<Control-p>', project_settings)
-menu_edit.bind_all('<Control-q>', question_settings)
 
 menubar.add_cascade(label='ファイル', menu=menu_file)
 menubar.add_cascade(label='編集', menu=menu_edit)
