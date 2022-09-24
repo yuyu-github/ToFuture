@@ -1,10 +1,16 @@
+from glob import glob
 import sys
 from tkinter import *
 
+from tftr_data import TftrData
 from file import load
+from display import ContentType, update, update_content
+
+tftr_data: TftrData = None
 
 def create_new(event = None):
-  pass
+  global tftr_data
+  tftr_data = load()
 
 def file_open(event = None):
   pass
@@ -18,11 +24,9 @@ def save_as(event = None):
 def project_settings(event = None):
   pass
 
-def question_settings(event = None):
-  pass
-
 root = Tk()
 root.title('ToFuture')
+root.geometry('1280x720')
 
 menubar = Menu(root)
 
@@ -43,5 +47,7 @@ menu_edit.bind_all('<Control-p>', project_settings)
 menubar.add_cascade(label='ファイル', menu=menu_file)
 menubar.add_cascade(label='編集', menu=menu_edit)
 root.config(menu=menubar)
+
+update(ContentType.START, tftr_data, root, {'create_new': create_new})
 
 root.mainloop()
