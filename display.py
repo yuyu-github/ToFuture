@@ -29,7 +29,8 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
   global editDeadlineDateEntry
 
   for widget in root.winfo_children():
-    widget.destroy()
+    if widget.widgetName != 'menu':
+      widget.destroy()
   
   match type:
     case ContentType.START:
@@ -52,7 +53,13 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
       editDeadlineDateEntry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
       settingsFrame.columnconfigure(1, weight=1)
     case ContentType.VIEW:
-      pass
+      dataText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
+      dataText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
+      replyFrame = ttk.Frame(root)
+      replyFrame.grid(column=1, row=0, padx=10, pady=15, sticky=NSEW)
+      root.rowconfigure(0, weight=1)
+      root.columnconfigure(0, weight=4)
+      root.columnconfigure(1, weight=3, minsize=350)
     case ContentType.NOT_VIEWABLE:
       pass
 
