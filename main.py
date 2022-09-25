@@ -11,6 +11,7 @@ tftr_data: TftrData = None
 def create_new(event = None):
   global tftr_data
   tftr_data = load()
+  update(ContentType.EDIT, tftr_data, root)
 
 def file_open(event = None):
   pass
