@@ -1,10 +1,11 @@
 from glob import glob
 import sys
 from tkinter import *
+from tkinter import filedialog
 
 from tftr_data import TftrData
 from file import load
-from display import ContentType, update, update_content
+from display import ContentType, update
 
 tftr_data: TftrData = None
 
@@ -20,9 +21,6 @@ def save(event = None):
   pass
 
 def save_as(event = None):
-  pass
-
-def project_settings(event = None):
   pass
 
 root = Tk()
@@ -41,12 +39,7 @@ menu_file.bind_all('<Control-o>', open_file)
 menu_file.bind_all('<Control-s>', save)
 menu_file.bind_all('<Control-Shift-S>', save_as)
 
-menu_edit = Menu(menubar, tearoff=False)
-menu_edit.add_command(label='ファイル設定', accelerator='Ctrl+P', command=project_settings)
-menu_edit.bind_all('<Control-p>', project_settings)
-
 menubar.add_cascade(label='ファイル', menu=menu_file)
-menubar.add_cascade(label='編集', menu=menu_edit)
 root.config(menu=menubar)
 
 update(ContentType.START, tftr_data, root, {'create_new': create_new, 'open_file': open_file})

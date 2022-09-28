@@ -61,6 +61,3 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
       root.rowconfigure(0, weight=1)
       root.columnconfigure(0, weight=4)
       root.columnconfigure(1, weight=3, minsize=350)
-
-def update_content(tftr_data: TftrData):
-  pass
