@@ -13,7 +13,6 @@ class ContentType(Enum):
   START = 1
   EDIT = 2
   VIEW = 3
-  NOT_VIEWABLE = 4
   
 class Format(Enum):
   TEXT = 1
@@ -34,8 +33,10 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
   
   match type:
     case ContentType.START:
+      frame = ttk.Frame(root).pack(padx=50, fill=BOTH)
       ttk.Style().configure('big.TButton', font=('Yu Gothic UI', 15))
-      ttk.Button(root, text='新規作成', width=20, padding=[10], style='big.TButton', command=commands['create_new']).pack(anchor='center', expand=0.4)
+      ttk.Button(frame, text='新規作成', width=20, padding=[10], style='big.TButton', command=commands['create_new']).place(anchor=CENTER, relx=0.5, rely=0.5, x=-170)
+      ttk.Button(frame, text='ファイルを開く', width=20, padding=[10], style='big.TButton', command=commands['open_file']).place(anchor=CENTER, relx=0.5, rely=0.5, x=170)
     case ContentType.EDIT:
       dataText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
       dataText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
@@ -60,8 +61,6 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
       root.rowconfigure(0, weight=1)
       root.columnconfigure(0, weight=4)
       root.columnconfigure(1, weight=3, minsize=350)
-    case ContentType.NOT_VIEWABLE:
-      pass
 
 def update_content(tftr_data: TftrData):
   pass
