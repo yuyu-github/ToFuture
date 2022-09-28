@@ -47,10 +47,10 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
       root.columnconfigure(1, weight=1, minsize=250)
       
       Label(settingsFrame, text='閲覧可能日').grid(column=0, row=0, sticky=W)
-      viewableDateEntry = DateEntry(settingsFrame, showweeknumbers=False)
+      viewableDateEntry = DateEntry(settingsFrame, showweeknumbers=False, year=tftr_data.viewable_date.year, month=tftr_data.viewable_date.month, day=tftr_data.viewable_date.day)
       viewableDateEntry.grid(column=1, row=0, padx=10, pady=2, sticky=EW) 
       Label(settingsFrame, text='編集期限').grid(column=0, row=1, sticky=W)
-      editDeadlineDateEntry = DateEntry(settingsFrame, showweeknumbers=False)
+      editDeadlineDateEntry = DateEntry(settingsFrame, showweeknumbers=False, year=tftr_data.edit_deadline.year, month=tftr_data.edit_deadline.month, day=tftr_data.edit_deadline.day)
       editDeadlineDateEntry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
       settingsFrame.columnconfigure(1, weight=1)
     case ContentType.VIEW:
