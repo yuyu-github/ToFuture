@@ -26,9 +26,19 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
   global dataText
   global viewableDateEntry
   global editDeadlineDateEntry
-
+  
   for widget in root.winfo_children():
-    if widget.widgetName != 'menu':
+    if widget.widgetName == 'menu':
+      menu_file = widget.winfo_children()[widget.index('ファイル') - 1]
+      
+      menu_file.entryconfig(menu_file.index('上書き保存'), state='normal')
+      menu_file.entryconfig(menu_file.index('名前をつけて保存'), state='normal')
+      
+      match type:
+        case ContentType.START:
+          menu_file.entryconfig(menu_file.index('上書き保存'), state='disabled')
+          menu_file.entryconfig(menu_file.index('名前をつけて保存'), state='disabled')
+    else:
       widget.destroy()
   
   match type:
