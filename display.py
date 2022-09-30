@@ -18,12 +18,12 @@ class Format(Enum):
   TEXT = 1
   MARKDOWN = 2
   
-dataText: scrolledtext.ScrolledText
+contentText: scrolledtext.ScrolledText
 viewableDateEntry: DateEntry
 editDeadlineDateEntry: DateEntry
 
 def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str, Callable] = {}):
-  global dataText
+  global contentText
   global viewableDateEntry
   global editDeadlineDateEntry
   
@@ -48,8 +48,8 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
       ttk.Button(frame, text='新規作成', width=20, padding=[10], style='big.TButton', command=commands['create_new']).place(anchor=CENTER, relx=0.5, rely=0.5, x=-170)
       ttk.Button(frame, text='ファイルを開く', width=20, padding=[10], style='big.TButton', command=commands['open_file']).place(anchor=CENTER, relx=0.5, rely=0.5, x=170)
     case ContentType.EDIT:
-      dataText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
-      dataText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
+      contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
+      contentText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
       settingsFrame = ttk.Frame(root)
       settingsFrame.grid(column=1, row=0, padx=10, pady=15, sticky=NSEW)
       root.rowconfigure(0, weight=1)
@@ -64,8 +64,8 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
       editDeadlineDateEntry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
       settingsFrame.columnconfigure(1, weight=1)
     case ContentType.VIEW:
-      dataText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
-      dataText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
+      contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
+      contentText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
       replyFrame = ttk.Frame(root)
       replyFrame.grid(column=1, row=0, padx=10, pady=15, sticky=NSEW)
       root.rowconfigure(0, weight=1)

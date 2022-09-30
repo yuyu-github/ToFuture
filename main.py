@@ -1,13 +1,16 @@
-from glob import glob
-import sys
+from datetime import datetime
+from functools import reduce
 from tkinter import *
 from tkinter import filedialog
+from tkinter import messagebox
 
 from tftr_data import TftrData
 from file import load
 from display import ContentType, update
+import display
 
 tftr_data: TftrData = None
+filepath: str = ''
 
 def create_new(event = None):
   global tftr_data
@@ -18,10 +21,36 @@ def open_file(event = None):
   pass
 
 def save(event = None):
-  pass
+  global tftr_data
+  
+  if filepath == '':
+    save_as()
+    return
+
+  tftr_data.last_update = datetime.now()
+  tftr_data.content = display.contentText.get("1.0", END)
+  
+  data = bytes()
+  data += b'\x00' + int(tftr_data.creation_date.timestamp()).to_bytes(8, 'big')
+  data += b'\x01' + int(tftr_data.last_update.timestamp()).to_bytes(8, 'big')
+  data += b'\x02' + int(tftr_data.viewable_date.timestamp()).to_bytes(8, 'big')
+  data += b'\x03' + int(tftr_data.edit_deadline.timestamp()).to_bytes(8, 'big')
+  content_bytes = tftr_data.content.encode('utf-8')
+  data += b'\x04' + len(content_bytes).to_bytes(8, 'big') + content_bytes
+  data += b'\x05' + len(tftr_data.files.keys()).to_bytes(2, 'big') + \
+    reduce(lambda a, b: a + b, [len(k.encode('utf-8')).to_bytes(2, 'big') + len(v).to_bytes(8, 'big') + k.encode('utf-8') + v for k, v in tftr_data.files.items()])
+  
+  f = open(filepath, 'wb')
+  f.write(data)
+  f.close()
 
 def save_as(event = None):
-  pass
+  global filepath
+
+  path = filedialog.asksaveasfilename(filetypes=[('ToFutureファイル', '*.tftr')])
+  if path != '':
+    filepath = path
+    save()
 
 root = Tk()
 root.title('ToFuture')
