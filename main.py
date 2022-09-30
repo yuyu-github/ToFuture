@@ -1,11 +1,10 @@
 from datetime import datetime
-from functools import reduce
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 
 from tftr_data import TftrData
-from file import load
+from file import load, save as save_to_file
 from display import ContentType, update
 import display
 
@@ -30,19 +29,7 @@ def save(event = None):
   tftr_data.last_update = datetime.now()
   tftr_data.content = display.contentText.get("1.0", END)
   
-  data = bytes()
-  data += b'\x00' + int(tftr_data.creation_date.timestamp()).to_bytes(8, 'big')
-  data += b'\x01' + int(tftr_data.last_update.timestamp()).to_bytes(8, 'big')
-  data += b'\x02' + int(tftr_data.viewable_date.timestamp()).to_bytes(8, 'big')
-  data += b'\x03' + int(tftr_data.edit_deadline.timestamp()).to_bytes(8, 'big')
-  content_bytes = tftr_data.content.encode('utf-8')
-  data += b'\x04' + len(content_bytes).to_bytes(8, 'big') + content_bytes
-  data += b'\x05' + len(tftr_data.files.keys()).to_bytes(2, 'big') + \
-    reduce(lambda a, b: a + b, [len(k.encode('utf-8')).to_bytes(2, 'big') + len(v).to_bytes(8, 'big') + k.encode('utf-8') + v for k, v in tftr_data.files.items()])
-  
-  f = open(filepath, 'wb')
-  f.write(data)
-  f.close()
+  save_to_file(tftr_data, filepath)
 
 def save_as(event = None):
   global filepath
