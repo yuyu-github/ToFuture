@@ -42,7 +42,7 @@ def open_file(event = None):
         state = State.VIEW
         update(state, tftr_data, root)
       else:
-        viewable_date = tftr_data.viewable_date.strftime("%y/%m/%y %H:%M:%S")
+        viewable_date = tftr_data.viewable_date.strftime("%Y/%m/%y %H:%M")
         messagebox.showinfo(title='閲覧不可', message=f'このファイルは{viewable_date}まで閲覧できません')
 
 def save(event = None):
