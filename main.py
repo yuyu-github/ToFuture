@@ -15,12 +15,15 @@ tftr_data: TftrData = None
 filepath: str = ''
 
 def create_new(event = None):
+  global state
   global tftr_data
+
   tftr_data = load()
   state = State.EDIT
   update(state, tftr_data, root)
 
 def open_file(event = None):
+  global state
   global tftr_data
   global filepath
 

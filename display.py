@@ -38,6 +38,7 @@ def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Calla
       ttk.Button(frame, text='ファイルを開く', width=20, padding=[10], style='big.TButton', command=commands['open_file']).place(anchor=CENTER, relx=0.5, rely=0.5, x=170)
     case State.EDIT:
       contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
+      contentText.insert('1.0', tftr_data.content)
       contentText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
       settingsFrame = ttk.Frame(root)
       settingsFrame.grid(column=1, row=0, padx=10, pady=15, sticky=NSEW)
@@ -53,7 +54,8 @@ def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Calla
       editDeadlineDateEntry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
       settingsFrame.columnconfigure(1, weight=1)
     case State.VIEW:
-      contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
+      contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12), state='disabled')
+      contentText.insert('1.0', tftr_data.content)
       contentText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
       replyFrame = ttk.Frame(root)
       replyFrame.grid(column=1, row=0, padx=10, pady=15, sticky=NSEW)
