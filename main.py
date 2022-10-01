@@ -49,10 +49,11 @@ def save(event = None):
     save_as()
     return
 
-  tftr_data.last_update = datetime.now()
-  tftr_data.edit_deadline = datetime.combine(display.editDeadlineDateEntry.get_date(), time())
-  tftr_data.viewable_date = datetime.combine(display.viewableDateEntry.get_date(), time())
-  tftr_data.content = display.contentText.get("1.0", END)
+  if state == State.EDIT:
+    tftr_data.last_update = datetime.now()
+    tftr_data.edit_deadline = datetime.combine(display.editDeadlineDateEntry.get_date(), time())
+    tftr_data.viewable_date = datetime.combine(display.viewableDateEntry.get_date(), time())
+    tftr_data.content = display.contentText.get("1.0", END)
   
   save_to_file(tftr_data, filepath)
 
