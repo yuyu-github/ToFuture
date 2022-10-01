@@ -54,8 +54,9 @@ def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Calla
       editDeadlineDateEntry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
       settingsFrame.columnconfigure(1, weight=1)
     case State.VIEW:
-      contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12), state='disabled')
+      contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
       contentText.insert('1.0', tftr_data.content)
+      contentText.config(state='disabled')
       contentText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
       replyFrame = ttk.Frame(root)
       replyFrame.grid(column=1, row=0, padx=10, pady=15, sticky=NSEW)
