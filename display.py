@@ -1,28 +1,17 @@
-from calendar import calendar
-from enum import Enum
-from operator import truediv
 from tkinter import *
 from tkinter import ttk
 from tkinter import scrolledtext
 from typing import Callable
 from tkcalendar import DateEntry
 
+from state import State
 from tftr_data import TftrData
-
-class ContentType(Enum): 
-  START = 1
-  EDIT = 2
-  VIEW = 3
-  
-class Format(Enum):
-  TEXT = 1
-  MARKDOWN = 2
   
 contentText: scrolledtext.ScrolledText
 viewableDateEntry: DateEntry
 editDeadlineDateEntry: DateEntry
 
-def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str, Callable] = {}):
+def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Callable] = {}):
   global contentText
   global viewableDateEntry
   global editDeadlineDateEntry
@@ -35,19 +24,19 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
       menu_file.entryconfig(menu_file.index('名前をつけて保存'), state='normal')
       
       match type:
-        case ContentType.START:
+        case State.START:
           menu_file.entryconfig(menu_file.index('上書き保存'), state='disabled')
           menu_file.entryconfig(menu_file.index('名前をつけて保存'), state='disabled')
     else:
       widget.destroy()
   
   match type:
-    case ContentType.START:
+    case State.START:
       frame = ttk.Frame(root).pack(padx=50, fill=BOTH)
       ttk.Style().configure('big.TButton', font=('Yu Gothic UI', 15))
       ttk.Button(frame, text='新規作成', width=20, padding=[10], style='big.TButton', command=commands['create_new']).place(anchor=CENTER, relx=0.5, rely=0.5, x=-170)
       ttk.Button(frame, text='ファイルを開く', width=20, padding=[10], style='big.TButton', command=commands['open_file']).place(anchor=CENTER, relx=0.5, rely=0.5, x=170)
-    case ContentType.EDIT:
+    case State.EDIT:
       contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
       contentText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
       settingsFrame = ttk.Frame(root)
@@ -63,7 +52,7 @@ def update(type: ContentType, tftr_data: TftrData, root: Tk, commands: dict[str,
       editDeadlineDateEntry = DateEntry(settingsFrame, showweeknumbers=False, year=tftr_data.edit_deadline.year, month=tftr_data.edit_deadline.month, day=tftr_data.edit_deadline.day)
       editDeadlineDateEntry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
       settingsFrame.columnconfigure(1, weight=1)
-    case ContentType.VIEW:
+    case State.VIEW:
       contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
       contentText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
       replyFrame = ttk.Frame(root)

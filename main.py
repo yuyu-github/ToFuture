@@ -5,8 +5,9 @@ from tkinter import messagebox
 import os
 
 from tftr_data import TftrData
+from state import State
 from file import load, save as save_to_file
-from display import ContentType, update
+from display import State, update
 import display
 
 tftr_data: TftrData = None
@@ -15,7 +16,7 @@ filepath: str = ''
 def create_new(event = None):
   global tftr_data
   tftr_data = load()
-  update(ContentType.EDIT, tftr_data, root)
+  update(State.EDIT, tftr_data, root)
 
 def open_file(event = None):
   global tftr_data
@@ -30,9 +31,9 @@ def open_file(event = None):
       messagebox.showerror(title='エラー', message='ファイルを読み込めませんでした')
     else:
       if datetime.now() <= tftr_data.edit_deadline:
-        update(ContentType.EDIT, tftr_data, root)
+        update(State.EDIT, tftr_data, root)
       elif datetime.now() >= tftr_data.viewable_date:
-        update(ContentType.VIEW, tftr_data, root)
+        update(State.VIEW, tftr_data, root)
       else:
         viewable_date = tftr_data.viewable_date.strftime("%y/%m/%y %H:%M:%S")
         messagebox.showinfo(title='閲覧不可', message=f'このファイルは{viewable_date}まで閲覧できません')
@@ -78,6 +79,6 @@ menu_file.bind_all('<Control-Shift-S>', save_as)
 menubar.add_cascade(label='ファイル', menu=menu_file)
 root.config(menu=menubar)
 
-update(ContentType.START, tftr_data, root, {'create_new': create_new, 'open_file': open_file})
+update(State.START, tftr_data, root, {'create_new': create_new, 'open_file': open_file})
 
 root.mainloop()
