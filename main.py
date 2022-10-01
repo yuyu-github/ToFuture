@@ -1,7 +1,9 @@
+from copyreg import constructor
 from datetime import datetime
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
+import os
 
 from tftr_data import TftrData
 from file import load, save as save_to_file
@@ -17,7 +19,24 @@ def create_new(event = None):
   update(ContentType.EDIT, tftr_data, root)
 
 def open_file(event = None):
-  pass
+  global tftr_data
+  global filepath
+
+  path = filedialog.askopenfilename(filetypes=[('ToFutureファイル', '*.tftr')])
+  if path != '' and os.path.isfile(path):
+    filepath = path
+    tftr_data = load(filepath)
+
+    if tftr_data == None:
+      messagebox.showerror(title='エラー', message='ファイルを読み込めませんでした')
+    else:
+      if datetime.now() <= tftr_data.edit_deadline:
+        update(ContentType.EDIT, tftr_data, root)
+      elif datetime.now() >= tftr_data.viewable_date:
+        update(ContentType.VIEW, tftr_data, root)
+      else:
+        viewable_date = tftr_data.viewable_date.strftime("%y/%m/%y %H:%M:%S")
+        messagebox.showinfo(title='閲覧不可', message=f'このファイルは{viewable_date}まで閲覧できません')
 
 def save(event = None):
   global tftr_data

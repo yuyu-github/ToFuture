@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import reduce
 from tftr_data import TftrData
 
@@ -19,3 +20,53 @@ def save(tftr_data: TftrData, path: str):
 def load(path: str = ''):
   if path == '':
     return TftrData()
+  
+  tftr_data = TftrData()
+  
+  f = open(path, 'rb')
+  data = f.read()
+  f.close()
+  
+  i = 0
+  data_len = len(data)
+  while i < data_len:
+    type = data[i]
+    match type:
+      case 0:
+        tftr_data.creation_date = datetime.fromtimestamp(int.from_bytes(data[i+1:i+9], 'big'))
+        i += 9
+      case 1:
+        tftr_data.last_update = datetime.fromtimestamp(int.from_bytes(data[i+1:i+9], 'big'))
+        i += 9
+      case 2:
+        tftr_data.viewable_date = datetime.fromtimestamp(int.from_bytes(data[i+1:i+9], 'big'))
+        i += 9
+      case 3:
+        tftr_data.edit_deadline = datetime.fromtimestamp(int.from_bytes(data[i+1:i+9], 'big'))
+        i += 9
+      case 4:
+        size = int.from_bytes(data[i+1:i+9], 'big')
+        i += 9
+        tftr_data.content = data[i:i+size].decode('utf-8')
+        i += size
+      case 5:
+        file_count = int.from_bytes(data[i+1:i+3], 'big')
+        i += 3
+
+        files: dict[str, bytes] = {}
+        for i in range(file_count):
+          file_name_len = data[i:i+2]
+          i += 2
+          file_data_len = data[i:i+8]
+          i += 8
+          file_name = data[i:i+file_name_len].decode('utf-8')
+          i += file_name_len
+          file_data = data[i:i+file_data_len]
+          i += file_data_len
+          files[file_name] = file_data
+        
+        tftr_data.files = files
+      case _:
+        return None
+  
+  return tftr_data
