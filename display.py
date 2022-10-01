@@ -1,6 +1,9 @@
+from logging.config import fileConfig
 from tkinter import *
 from tkinter import ttk
 from tkinter import scrolledtext
+from tkinter.font import Font
+from turtle import back, width
 from typing import Callable
 from tkcalendar import DateEntry
 
@@ -39,10 +42,15 @@ def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Calla
     case State.EDIT:
       contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
       contentText.insert('1.0', tftr_data.content)
-      contentText.grid(column=0, row=0, padx=10, pady=10, sticky=NSEW)
-      settingsFrame = ttk.Frame(root)
-      settingsFrame.grid(column=1, row=0, padx=10, pady=15, sticky=NSEW)
-      root.rowconfigure(0, weight=1)
+      contentText.grid(column=0, row=0, rowspan=3, padx=10, pady=10, sticky=NSEW)
+      settingsFrame = Frame(root)
+      settingsFrame.grid(column=1, row=0, padx=(0, 10), pady=(15, 10), sticky=NSEW)
+      fileControlFrame = Frame(root)
+      fileControlFrame.grid(column=1, row=1, padx=(0, 10), pady=5, sticky=NSEW)
+      fileListFrame = Frame(root)
+      fileListFrame.grid(column=1, row=2, padx=(0, 10), pady=(0, 20), sticky=NSEW)
+      root.rowconfigure(0)
+      root.rowconfigure(2, weight=1)
       root.columnconfigure(0, weight=2)
       root.columnconfigure(1, weight=1, minsize=250)
       
@@ -53,6 +61,22 @@ def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Calla
       editDeadlineDateEntry = DateEntry(settingsFrame, showweeknumbers=False, year=tftr_data.edit_deadline.year, month=tftr_data.edit_deadline.month, day=tftr_data.edit_deadline.day)
       editDeadlineDateEntry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
       settingsFrame.columnconfigure(1, weight=1)
+      
+      addFileButton = ttk.Button(fileControlFrame, text='ファイルを追加')
+      addFileButton.pack(side=LEFT, padx=2)
+      deleteFileButton = ttk.Button(fileControlFrame, text='ファイルを削除')
+      deleteFileButton.pack(side=LEFT, padx=2)
+      renameFileButton = ttk.Button(fileControlFrame, text='名前を変更')
+      renameFileButton.pack(side=LEFT, padx=2)
+      
+      fileListbox = Listbox(fileListFrame, font=('Yu Gothic UI', 15), listvariable=StringVar(value=tuple(tftr_data.files.keys())), activestyle=NONE, selectbackground='skyblue', selectforeground='black', highlightthickness=0)
+      fileListbox.grid(column=0, row=0, sticky=NSEW)
+      fileListScrollbar = ttk.Scrollbar(fileListFrame, orient=VERTICAL, command=fileListbox.yview)
+      fileListScrollbar.grid(column=1, row=0, sticky=NS)
+      fileListbox.config(yscrollcommand=fileListScrollbar.set)
+      fileListbox.bind_all('<MouseWheel>', lambda self: fileListbox.yview_scroll((self.delta < 0) - (self.delta > 0), 'units'))
+      fileListFrame.rowconfigure(0, weight=1)
+      fileListFrame.columnconfigure(0, weight=1)
     case State.VIEW:
       contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
       contentText.insert('1.0', tftr_data.content)
