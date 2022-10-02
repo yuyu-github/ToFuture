@@ -1,8 +1,12 @@
 from datetime import datetime, time
+from select import select
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 import os
+from tkinter import simpledialog
+
+from numpy import disp
 
 from tftr_data import TftrData
 from state import State
@@ -14,13 +18,39 @@ state: State = State.START
 tftr_data: TftrData = None
 filepath: str = ''
 
+def add_file(event = None):
+  path = filedialog.askopenfilename(filetypes=[('すべてのファイル', '*.*')])
+  filename = os.path.basename(path)
+  f = open(path, 'rb')
+  tftr_data.files[filename] = f.read()
+  f.close()
+  display.fileListbox.insert(END, filename)
+
+def delete_file(event = None):
+  select: str = display.fileListbox.curselection()
+  if len(select) > 0:
+    tftr_data.files.pop(display.fileListbox.get(select[0]))
+    display.fileListbox.delete(ACTIVE)
+    
+
+def rename_file(event = None):
+  select: str = display.fileListbox.curselection()
+  if len(select) > 0:
+    old_name = display.fileListbox.get(select[0])
+    new_name = simpledialog.askstring('名前の変更', '新しい名前を入力してください', initialvalue=old_name)
+    if new_name != None and new_name != '':
+      tftr_data.files[new_name] = tftr_data.files.pop(old_name)
+      display.fileListbox.insert(select[0], new_name)
+      display.fileListbox.delete(select[0] + 1)
+      display.fileListbox.select_set(select[0])
+
 def create_new(event = None):
   global state
   global tftr_data
 
   tftr_data = load()
   state = State.EDIT
-  update(state, tftr_data, root)
+  update(state, tftr_data, root, {'add_file': add_file, 'delete_file': delete_file, 'rename_file': rename_file})
 
 def open_file(event = None):
   global state
@@ -37,7 +67,7 @@ def open_file(event = None):
     else:
       if datetime.now() <= tftr_data.edit_deadline:
         state = State.EDIT
-        update(state, tftr_data, root)
+        update(state, tftr_data, root, {'add_file': add_file, 'delete_file': delete_file, 'rename_file': rename_file})
       elif datetime.now() >= tftr_data.viewable_date:
         state = State.VIEW
         update(state, tftr_data, root)

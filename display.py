@@ -13,11 +13,13 @@ from tftr_data import TftrData
 contentText: scrolledtext.ScrolledText
 viewableDateEntry: DateEntry
 editDeadlineDateEntry: DateEntry
+fileListbox: Listbox
 
 def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Callable] = {}):
   global contentText
   global viewableDateEntry
   global editDeadlineDateEntry
+  global fileListbox
   
   for widget in root.winfo_children():
     if widget.widgetName == 'menu':
@@ -62,11 +64,11 @@ def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Calla
       editDeadlineDateEntry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
       settingsFrame.columnconfigure(1, weight=1)
       
-      addFileButton = ttk.Button(fileControlFrame, text='ファイルを追加')
+      addFileButton = ttk.Button(fileControlFrame, text='ファイルを追加', command=commands['add_file'])
       addFileButton.pack(side=LEFT, padx=2)
-      deleteFileButton = ttk.Button(fileControlFrame, text='ファイルを削除')
+      deleteFileButton = ttk.Button(fileControlFrame, text='ファイルを削除', command=commands['delete_file'])
       deleteFileButton.pack(side=LEFT, padx=2)
-      renameFileButton = ttk.Button(fileControlFrame, text='名前を変更')
+      renameFileButton = ttk.Button(fileControlFrame, text='名前を変更', command=commands['rename_file'])
       renameFileButton.pack(side=LEFT, padx=2)
       
       fileListbox = Listbox(fileListFrame, font=('Yu Gothic UI', 15), listvariable=StringVar(value=tuple(tftr_data.files.keys())), activestyle=NONE, selectbackground='skyblue', selectforeground='black', highlightthickness=0)
