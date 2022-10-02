@@ -16,13 +16,11 @@ viewable_date_entry: DateEntry
 edit_deadline_date_entry: DateEntry
 file_listbox: Listbox
 
-def update(type: State, tftr_data: TftrData, root: Tk, *, filepath = '', commands: dict[str, Callable] = {}):
+def update(type: State, tftr_data: TftrData, root: Tk, *, commands: dict[str, Callable] = {}):
   global content_text
   global viewable_date_entry
   global edit_deadline_date_entry
   global file_listbox
-  
-  name = os.path.basename(filepath) if filepath != '' else '新規ファイル'
   
   for widget in root.winfo_children():
     if widget.widgetName == 'menu':
@@ -47,8 +45,6 @@ def update(type: State, tftr_data: TftrData, root: Tk, *, filepath = '', command
       ttk.Button(frame, text='新規作成', width=20, padding=[10], style='big.TButton', command=commands['create_new']).place(anchor=CENTER, relx=0.5, rely=0.5, x=-170)
       ttk.Button(frame, text='ファイルを開く', width=20, padding=[10], style='big.TButton', command=commands['open_file']).place(anchor=CENTER, relx=0.5, rely=0.5, x=170)
     case State.EDIT:
-      root.title(f'{name} - ToFuture')
-      
       def on_key_press(event: Event):
         if not (event.keysym.startswith('Control') or event.keysym.startswith('Shift') or event.keysym.startswith('Alt') or event.keysym.startswith('Win') or event.state > 1) or \
           (event.state == 4 and re.match(r'^[xvXV]$', event.keysym)):
@@ -102,9 +98,7 @@ def update(type: State, tftr_data: TftrData, root: Tk, *, filepath = '', command
       file_listbox.bind_all('<MouseWheel>', lambda self: file_listbox.yview_scroll((self.delta < 0) - (self.delta > 0), 'units'))
       file_list_frame.rowconfigure(0, weight=1)
       file_list_frame.columnconfigure(0, weight=1)
-    case State.VIEW:
-      root.title(f'{name} - ToFuture')
-      
+    case State.VIEW:      
       content_text = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
       content_text.insert('1.0', tftr_data.content)
       content_text.config(state='disabled')

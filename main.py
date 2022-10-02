@@ -19,13 +19,19 @@ state: State = State.START
 tftr_data: TftrData = None
 filepath: str = ''
 opened_attachments: dict[str, str] = {}
-
 saved = False
+
+def update_title():
+  name = os.path.basename(filepath) if filepath != '' else '新規ファイル'
+  saved_symbol = '*' * (not saved)
+  root.title(f'{name}{saved_symbol} - ToFuture')
+
 def set_saved(value):
   global saved
 
   if saved != value:
     saved = value
+    update_title()
 
 def add_attachment(event = None):
   path = filedialog.askopenfilename(filetypes=[('すべてのファイル', '*.*')])
@@ -102,10 +108,11 @@ def create_new(event = None):
 
   tftr_data = load()
   state = State.EDIT
-  update(state, tftr_data, root, filepath=filepath, \
+  update(state, tftr_data, root, \
     commands={'set_saved': set_saved, 'add_attachment': add_attachment, 'delete_attachment': delete_attachment, 'rename_attachment': rename_attachment, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
 
   set_saved(False)
+  update_title()
 
 def open_file(event = None):
   global state
@@ -124,13 +131,15 @@ def open_file(event = None):
     else:
       if datetime.now() <= tftr_data.edit_deadline:
         state = State.EDIT
-        update(state, tftr_data, root, filepath=filepath, \
+        update(state, tftr_data, root, \
           commands={'set_saved': set_saved, 'add_attachment': add_attachment, 'delete_attachment': delete_attachment, 'rename_attachment': rename_attachment, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
         set_saved(True)
+        update_title()
       elif datetime.now() >= tftr_data.viewable_date:
         state = State.VIEW
         update(state, tftr_data, root, filepath=filepath, commands={'save_attachment': save_attachment, 'open_attachment': open_attachment})
         set_saved(True)
+        update_title()
       else:
         viewable_date = tftr_data.viewable_date.strftime("%Y/%m/%y %H:%M")
         messagebox.showinfo(title='閲覧不可', message=f'このファイルは{viewable_date}まで閲覧できません')
