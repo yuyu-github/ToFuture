@@ -1,5 +1,3 @@
-from email import message_from_string
-from genericpath import isfile
 import re
 import subprocess
 from datetime import datetime, time
