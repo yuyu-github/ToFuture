@@ -1,12 +1,12 @@
+import subprocess
 from datetime import datetime, time
-from select import select
+from io import BufferedWriter
+import tempfile
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 import os
 from tkinter import simpledialog
-
-from numpy import disp
 
 from tftr_data import TftrData
 from state import State
@@ -17,19 +17,21 @@ import display
 state: State = State.START
 tftr_data: TftrData = None
 filepath: str = ''
+opened_attachments: dict[str, str] = {}
 
 def add_attachment(event = None):
   path = filedialog.askopenfilename(filetypes=[('すべてのファイル', '*.*')])
-  filename = os.path.basename(path)
-  f = open(path, 'rb')
-  tftr_data.files[filename] = f.read()
-  f.close()
-  display.fileListbox.insert(END, filename)
+  if path != '':
+    filename = os.path.basename(path)
+    f = open(path, 'rb')
+    tftr_data.attachments[filename] = f.read()
+    f.close()
+    display.fileListbox.insert(END, filename)
 
 def delete_attachment(event = None):
   select: str = display.fileListbox.curselection()
   if len(select) > 0:
-    tftr_data.files.pop(display.fileListbox.get(select[0]))
+    tftr_data.attachments.pop(display.fileListbox.get(select[0]))
     display.fileListbox.delete(ACTIVE)    
 
 def rename_attachment(event = None):
@@ -38,7 +40,7 @@ def rename_attachment(event = None):
     old_name = display.fileListbox.get(select[0])
     new_name = simpledialog.askstring('名前の変更', '新しい名前を入力してください', initialvalue=old_name)
     if new_name != None and new_name != '':
-      tftr_data.files[new_name] = tftr_data.files.pop(old_name)
+      tftr_data.attachments[new_name] = tftr_data.attachments.pop(old_name)
       display.fileListbox.insert(select[0], new_name)
       display.fileListbox.delete(select[0] + 1)
       display.fileListbox.select_set(select[0])
@@ -48,12 +50,22 @@ def save_attachment(event = None):
   if len(select) > 0:
     filename = display.fileListbox.get(select[0])
     path = filedialog.asksaveasfilename(initialfile=filename)
-    f = open(path, 'wb')
-    f.write(tftr_data.files[filename])
-    f.close()
+    if path != '':
+      f = open(path, 'wb')
+      f.write(tftr_data.attachments[filename])
+      f.close()
 
 def open_attachment(event = None):
-  pass
+  select: str = display.fileListbox.curselection()
+  if len(select) > 0:
+    fullname = display.fileListbox.get(select[0])
+    (name, extentsion) = os.path.splitext(fullname)
+    temp_file_name = tempfile.NamedTemporaryFile(prefix=name + '_', suffix=extentsion).name
+    f = open(temp_file_name, 'wb')
+    f.write(tftr_data.attachments[fullname])
+    opened_attachments[fullname] = temp_file_name
+    f.close()
+    subprocess.Popen(['start', f.name], shell=True)
 
 def create_new(event = None):
   global state
@@ -79,7 +91,8 @@ def open_file(event = None):
     else:
       if datetime.now() <= tftr_data.edit_deadline:
         state = State.EDIT
-        update(state, tftr_data, root, {'add_file': add_attachment, 'delete_file': delete_attachment, 'rename_file': rename_attachment})
+        update(state, tftr_data, root, \
+          {'add_attachment': add_attachment, 'delete_attachment': delete_attachment, 'rename_attachment': rename_attachment, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
       elif datetime.now() >= tftr_data.viewable_date:
         state = State.VIEW
         update(state, tftr_data, root)
@@ -99,6 +112,11 @@ def save(event = None):
     tftr_data.edit_deadline = datetime.combine(display.editDeadlineDateEntry.get_date(), time())
     tftr_data.viewable_date = datetime.combine(display.viewableDateEntry.get_date(), time())
     tftr_data.content = display.contentText.get("1.0", END)
+    
+    for name, path in opened_attachments.items():
+      f = open(path, 'rb')
+      tftr_data.attachments[name] = f.read()
+      f.close()
   
   save_to_file(tftr_data, filepath)
 

@@ -78,7 +78,7 @@ def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Calla
       fileControlFrame.columnconfigure(1, weight=1)
       fileControlFrame.columnconfigure(2, weight=1)
       
-      fileListbox = Listbox(fileListFrame, font=('Yu Gothic UI', 15), listvariable=StringVar(value=tuple(tftr_data.files.keys())), activestyle=NONE, selectbackground='skyblue', selectforeground='black', highlightthickness=0)
+      fileListbox = Listbox(fileListFrame, font=('Yu Gothic UI', 15), listvariable=StringVar(value=tuple(tftr_data.attachments.keys())), activestyle=NONE, selectbackground='skyblue', selectforeground='black', highlightthickness=0)
       fileListbox.grid(column=0, row=0, sticky=NSEW)
       fileListScrollbar = ttk.Scrollbar(fileListFrame, orient=VERTICAL, command=fileListbox.yview)
       fileListScrollbar.grid(column=1, row=0, sticky=NS)
