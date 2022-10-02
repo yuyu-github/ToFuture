@@ -1,3 +1,4 @@
+from email import message_from_string
 import subprocess
 from datetime import datetime, time
 from io import BufferedWriter
@@ -67,10 +68,24 @@ def open_attachment(event = None):
     opened_attachments[fullname] = temp_file_name
     f.close()
     subprocess.Popen(['start', f.name], shell=True)
+    
+def confirm_save():
+  if state == State.START: return True
+  
+  name = os.path.basename(filepath) if filepath != '' else '新規ファイル'
+  answer = messagebox.askyesnocancel(title='確認', message=f"'{name}'は保存されていません。保存しますか？")
+  if answer:
+    if not save():
+      answer = None
+  if answer == None:
+    return False
+  return True
 
 def create_new(event = None):
   global state
   global tftr_data
+
+  if not confirm_save(): return
 
   tftr_data = load()
   state = State.EDIT
@@ -82,6 +97,8 @@ def open_file(event = None):
   global tftr_data
   global filepath
 
+  if not confirm_save(): return
+  
   path = filedialog.askopenfilename(filetypes=[('ToFutureファイル', '*.tftr')])
   if path != '' and os.path.isfile(path):
     filepath = path
@@ -105,8 +122,7 @@ def save(event = None):
   global tftr_data
   
   if filepath == '':
-    save_as()
-    return
+    return save_as()
 
   if state == State.EDIT:
     tftr_data.last_update = datetime.now()
@@ -119,7 +135,7 @@ def save(event = None):
       tftr_data.attachments[name] = f.read()
       f.close()
   
-  save_to_file(tftr_data, filepath)
+  return save_to_file(tftr_data, filepath)
 
 def save_as(event = None):
   global filepath
@@ -127,11 +143,17 @@ def save_as(event = None):
   path = filedialog.asksaveasfilename(filetypes=[('ToFutureファイル', '*.tftr')])
   if path != '':
     filepath = path
-    save()
+    return save()
+  return False
 
 root = Tk()
 root.title('ToFuture')
 root.geometry('1280x720')
+
+def onCloseWindow():
+  if confirm_save():
+    root.destroy()
+root.protocol('WM_DELETE_WINDOW', onCloseWindow)
 
 menubar = Menu(root)
 

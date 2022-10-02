@@ -16,6 +16,8 @@ def save(tftr_data: TftrData, path: str):
   f = open(path, 'wb')
   f.write(data)
   f.close()
+  
+  return True
 
 def load(path: str = ''):
   if path == '':
