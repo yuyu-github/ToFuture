@@ -20,6 +20,13 @@ tftr_data: TftrData = None
 filepath: str = ''
 opened_attachments: dict[str, str] = {}
 
+saved = False
+def set_saved(value):
+  global saved
+
+  if saved != value:
+    saved = value
+
 def add_attachment(event = None):
   path = filedialog.askopenfilename(filetypes=[('すべてのファイル', '*.*')])
   if path != '':
@@ -29,12 +36,16 @@ def add_attachment(event = None):
     f.close()
     display.file_listbox.insert(END, filename)
 
+    set_saved(False)
+
 def delete_attachment(event = None):
   select: str = display.file_listbox.curselection()
   if len(select) > 0:
     if messagebox.askyesno(title='確認', message='ファイルを削除しますか？'):
       tftr_data.attachments.pop(display.file_listbox.get(select[0]))
-      display.file_listbox.delete(ACTIVE)    
+      display.file_listbox.delete(ACTIVE)
+
+      set_saved(False)
 
 def rename_attachment(event = None):
   select: str = display.file_listbox.curselection()
@@ -46,6 +57,8 @@ def rename_attachment(event = None):
       display.file_listbox.insert(select[0], new_name)
       display.file_listbox.delete(select[0] + 1)
       display.file_listbox.select_set(select[0])
+      
+      set_saved(False)
       
 def save_attachment(event = None):
   select: str = display.file_listbox.curselection()
@@ -70,7 +83,7 @@ def open_attachment(event = None):
     subprocess.Popen(['start', f.name], shell=True)
     
 def confirm_save():
-  if state == State.START: return True
+  if state == State.START or saved: return True
   
   name = os.path.basename(filepath) if filepath != '' else '新規ファイル'
   answer = messagebox.askyesnocancel(title='確認', message=f"'{name}'は保存されていません。保存しますか？")
@@ -90,7 +103,9 @@ def create_new(event = None):
   tftr_data = load()
   state = State.EDIT
   update(state, tftr_data, root, filepath=filepath, \
-    commands={'add_attachment': add_attachment, 'delete_attachment': delete_attachment, 'rename_attachment': rename_attachment, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
+    commands={'set_saved': set_saved, 'add_attachment': add_attachment, 'delete_attachment': delete_attachment, 'rename_attachment': rename_attachment, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
+
+  set_saved(False)
 
 def open_file(event = None):
   global state
@@ -110,10 +125,12 @@ def open_file(event = None):
       if datetime.now() <= tftr_data.edit_deadline:
         state = State.EDIT
         update(state, tftr_data, root, filepath=filepath, \
-          commands={'add_attachment': add_attachment, 'delete_attachment': delete_attachment, 'rename_attachment': rename_attachment, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
+          commands={'set_saved': set_saved, 'add_attachment': add_attachment, 'delete_attachment': delete_attachment, 'rename_attachment': rename_attachment, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
+        set_saved(True)
       elif datetime.now() >= tftr_data.viewable_date:
         state = State.VIEW
         update(state, tftr_data, root, filepath=filepath, commands={'save_attachment': save_attachment, 'open_attachment': open_attachment})
+        set_saved(True)
       else:
         viewable_date = tftr_data.viewable_date.strftime("%Y/%m/%y %H:%M")
         messagebox.showinfo(title='閲覧不可', message=f'このファイルは{viewable_date}まで閲覧できません')
@@ -135,7 +152,9 @@ def save(event = None):
       tftr_data.attachments[name] = f.read()
       f.close()
   
-  return save_to_file(tftr_data, filepath)
+  result = save_to_file(tftr_data, filepath)
+  set_saved(result)
+  return result
 
 def save_as(event = None):
   global filepath
@@ -149,10 +168,10 @@ def save_as(event = None):
 root = Tk()
 root.geometry('1280x720')
 
-def onCloseWindow():
+def on_close_window():
   if confirm_save():
     root.destroy()
-root.protocol('WM_DELETE_WINDOW', onCloseWindow)
+root.protocol('WM_DELETE_WINDOW', on_close_window)
 
 menubar = Menu(root)
 

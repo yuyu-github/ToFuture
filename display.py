@@ -1,4 +1,5 @@
 import os
+import re
 from tkinter import *
 from tkinter import ttk
 from tkinter import scrolledtext
@@ -48,9 +49,15 @@ def update(type: State, tftr_data: TftrData, root: Tk, *, filepath = '', command
     case State.EDIT:
       root.title(f'{name} - ToFuture')
       
+      def on_key_press(event: Event):
+        if not (event.keysym.startswith('Control') or event.keysym.startswith('Shift') or event.keysym.startswith('Alt') or event.keysym.startswith('Win') or event.state > 1) or \
+          (event.state == 4 and re.match(r'^[xvXV]$', event.keysym)):
+          commands['set_saved'](False)
+      
       content_text = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
       content_text.insert('1.0', tftr_data.content)
       content_text.grid(column=0, row=0, rowspan=3, padx=10, pady=10, sticky=NSEW)
+      content_text.bind('<KeyPress>', on_key_press)
       settings_frame = Frame(root)
       settings_frame.grid(column=1, row=0, padx=(0, 10), pady=(15, 10), sticky=NSEW)
       file_control_frame = Frame(root)
@@ -64,9 +71,13 @@ def update(type: State, tftr_data: TftrData, root: Tk, *, filepath = '', command
       Label(settings_frame, text='閲覧可能日').grid(column=0, row=0, sticky=W)
       viewable_date_entry = DateEntry(settings_frame, showweeknumbers=False, year=tftr_data.viewable_date.year, month=tftr_data.viewable_date.month, day=tftr_data.viewable_date.day)
       viewable_date_entry.grid(column=1, row=0, padx=10, pady=2, sticky=EW) 
+      viewable_date_entry.bind('<KeyPress>', on_key_press)
+      viewable_date_entry.bind('<<DateEntrySelected>>', on_key_press)
       Label(settings_frame, text='編集期限').grid(column=0, row=1, sticky=W)
       edit_deadline_date_entry = DateEntry(settings_frame, showweeknumbers=False, year=tftr_data.edit_deadline.year, month=tftr_data.edit_deadline.month, day=tftr_data.edit_deadline.day)
       edit_deadline_date_entry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
+      edit_deadline_date_entry.bind('<KeyPress>', on_key_press)
+      edit_deadline_date_entry.bind('<<DateEntrySelected>>', on_key_press)
       settings_frame.columnconfigure(1, weight=1)
       
       add_file_button = ttk.Button(file_control_frame, text='ファイルを追加', command=commands['add_attachment'])
