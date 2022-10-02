@@ -1,4 +1,5 @@
 from email import message_from_string
+import re
 import subprocess
 from datetime import datetime, time
 from io import BufferedWriter
@@ -70,7 +71,8 @@ def save_attachment(event = None):
   select: str = display.file_listbox.curselection()
   if len(select) > 0:
     filename = display.file_listbox.get(select[0])
-    path = filedialog.asksaveasfilename(initialfile=filename)
+    extension = re.sub(r'^\.', '', os.path.splitext(filename)[1])
+    path = filedialog.asksaveasfilename(initialfile=filename, filetypes=[(f'{extension}ファイル', f'*.{extension}' if extension != '' else '*.*')], defaultextension=extension)
     if path != '':
       f = open(path, 'wb')
       f.write(tftr_data.attachments[filename])
@@ -163,12 +165,13 @@ def save(event = None):
   
   result = save_to_file(tftr_data, filepath)
   set_saved(result)
+  update_title()
   return result
 
 def save_as(event = None):
   global filepath
 
-  path = filedialog.asksaveasfilename(filetypes=[('ToFutureファイル', '*.tftr')])
+  path = filedialog.asksaveasfilename(filetypes=[('ToFutureファイル', '*.tftr')], defaultextension='tftr')
   if path != '':
     filepath = path
     return save()
