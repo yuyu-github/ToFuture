@@ -1,8 +1,10 @@
 from email import message_from_string
+from genericpath import isfile
 import re
 import subprocess
 from datetime import datetime, time
 from io import BufferedWriter
+import sys
 import tempfile
 from tkinter import *
 from tkinter import filedialog
@@ -116,14 +118,15 @@ def create_new(event = None):
   set_saved(False)
   update_title()
 
-def open_file(event = None):
+def open_file(event = None, path = ''):
   global state
   global tftr_data
   global filepath
 
-  if not confirm_save(): return
-  
-  path = filedialog.askopenfilename(filetypes=[('ToFutureファイル', '*.tftr')])
+  if path == '':
+    if not confirm_save(): return
+    path = filedialog.askopenfilename(filetypes=[('ToFutureファイル', '*.tftr')])
+
   if path != '' and os.path.isfile(path):
     filepath = path
     tftr_data = load(filepath)
@@ -200,6 +203,7 @@ root.bind_all('<Control-Shift-S>', save_as)
 menubar.add_cascade(label='ファイル', menu=menu_file)
 root.config(menu=menubar)
 
-update(state, tftr_data, root, commands={'create_new': create_new, 'open_file': open_file})
+if len(sys.argv) > 1 and os.path.isfile(sys.argv[1]): open_file(path=sys.argv[1])
+else: update(state, tftr_data, root, commands={'create_new': create_new, 'open_file': open_file})
 
 root.mainloop()
