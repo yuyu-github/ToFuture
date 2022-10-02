@@ -1,4 +1,3 @@
-from logging.config import fileConfig
 from tkinter import *
 from tkinter import ttk
 from tkinter import scrolledtext
@@ -10,16 +9,16 @@ from tkcalendar import DateEntry
 from state import State
 from tftr_data import TftrData
   
-contentText: scrolledtext.ScrolledText
-viewableDateEntry: DateEntry
-editDeadlineDateEntry: DateEntry
-fileListbox: Listbox
+content_text: scrolledtext.ScrolledText
+viewable_date_entry: DateEntry
+edit_deadline_date_entry: DateEntry
+file_listbox: Listbox
 
 def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Callable] = {}):
-  global contentText
-  global viewableDateEntry
-  global editDeadlineDateEntry
-  global fileListbox
+  global content_text
+  global viewable_date_entry
+  global edit_deadline_date_entry
+  global file_listbox
   
   for widget in root.winfo_children():
     if widget.widgetName == 'menu':
@@ -42,76 +41,76 @@ def update(type: State, tftr_data: TftrData, root: Tk, commands: dict[str, Calla
       ttk.Button(frame, text='新規作成', width=20, padding=[10], style='big.TButton', command=commands['create_new']).place(anchor=CENTER, relx=0.5, rely=0.5, x=-170)
       ttk.Button(frame, text='ファイルを開く', width=20, padding=[10], style='big.TButton', command=commands['open_file']).place(anchor=CENTER, relx=0.5, rely=0.5, x=170)
     case State.EDIT:
-      contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
-      contentText.insert('1.0', tftr_data.content)
-      contentText.grid(column=0, row=0, rowspan=3, padx=10, pady=10, sticky=NSEW)
-      settingsFrame = Frame(root)
-      settingsFrame.grid(column=1, row=0, padx=(0, 10), pady=(15, 10), sticky=NSEW)
-      fileControlFrame = Frame(root)
-      fileControlFrame.grid(column=1, row=1, padx=(0, 10), pady=5, sticky=NSEW)
-      fileListFrame = Frame(root)
-      fileListFrame.grid(column=1, row=2, padx=(0, 10), pady=(0, 20), sticky=NSEW)
+      content_text = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
+      content_text.insert('1.0', tftr_data.content)
+      content_text.grid(column=0, row=0, rowspan=3, padx=10, pady=10, sticky=NSEW)
+      settings_frame = Frame(root)
+      settings_frame.grid(column=1, row=0, padx=(0, 10), pady=(15, 10), sticky=NSEW)
+      file_control_frame = Frame(root)
+      file_control_frame.grid(column=1, row=1, padx=(0, 10), pady=5, sticky=NSEW)
+      file_list_frame = Frame(root)
+      file_list_frame.grid(column=1, row=2, padx=(0, 10), pady=(0, 20), sticky=NSEW)
       root.rowconfigure(2, weight=1)
       root.columnconfigure(0, weight=2)
       root.columnconfigure(1, weight=1, minsize=250)
       
-      Label(settingsFrame, text='閲覧可能日').grid(column=0, row=0, sticky=W)
-      viewableDateEntry = DateEntry(settingsFrame, showweeknumbers=False, year=tftr_data.viewable_date.year, month=tftr_data.viewable_date.month, day=tftr_data.viewable_date.day)
-      viewableDateEntry.grid(column=1, row=0, padx=10, pady=2, sticky=EW) 
-      Label(settingsFrame, text='編集期限').grid(column=0, row=1, sticky=W)
-      editDeadlineDateEntry = DateEntry(settingsFrame, showweeknumbers=False, year=tftr_data.edit_deadline.year, month=tftr_data.edit_deadline.month, day=tftr_data.edit_deadline.day)
-      editDeadlineDateEntry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
-      settingsFrame.columnconfigure(1, weight=1)
+      Label(settings_frame, text='閲覧可能日').grid(column=0, row=0, sticky=W)
+      viewable_date_entry = DateEntry(settings_frame, showweeknumbers=False, year=tftr_data.viewable_date.year, month=tftr_data.viewable_date.month, day=tftr_data.viewable_date.day)
+      viewable_date_entry.grid(column=1, row=0, padx=10, pady=2, sticky=EW) 
+      Label(settings_frame, text='編集期限').grid(column=0, row=1, sticky=W)
+      edit_deadline_date_entry = DateEntry(settings_frame, showweeknumbers=False, year=tftr_data.edit_deadline.year, month=tftr_data.edit_deadline.month, day=tftr_data.edit_deadline.day)
+      edit_deadline_date_entry.grid(column=1, row=1, padx=10, pady=2, sticky=EW)
+      settings_frame.columnconfigure(1, weight=1)
       
-      addFileButton = ttk.Button(fileControlFrame, text='ファイルを追加', command=commands['add_attachment'])
-      addFileButton.grid(column=0, row=0, sticky=EW)
-      deleteFileButton = ttk.Button(fileControlFrame, text='ファイルを削除', command=commands['delete_attachment'])
-      deleteFileButton.grid(column=1, row=0, sticky=EW)
-      renameFileButton = ttk.Button(fileControlFrame, text='名前を変更', command=commands['rename_attachment'])
-      renameFileButton.grid(column=2, row=0, sticky=EW)
-      openFileButton = ttk.Button(fileControlFrame, text='ファイルを開く', command=commands['open_attachment'])
-      openFileButton.grid(column=0, row=1, sticky=EW)
-      saveFileButton = ttk.Button(fileControlFrame, text='ファイルを保存', command=commands['save_attachment'])
-      saveFileButton.grid(column=1, row=1, sticky=EW)
-      fileControlFrame.columnconfigure(0, weight=1)
-      fileControlFrame.columnconfigure(1, weight=1)
-      fileControlFrame.columnconfigure(2, weight=1)
+      add_file_button = ttk.Button(file_control_frame, text='ファイルを追加', command=commands['add_attachment'])
+      add_file_button.grid(column=0, row=0, sticky=EW)
+      delete_file_button = ttk.Button(file_control_frame, text='ファイルを削除', command=commands['delete_attachment'])
+      delete_file_button.grid(column=1, row=0, sticky=EW)
+      rename_file_button = ttk.Button(file_control_frame, text='名前を変更', command=commands['rename_attachment'])
+      rename_file_button.grid(column=2, row=0, sticky=EW)
+      open_file_button = ttk.Button(file_control_frame, text='ファイルを開く', command=commands['open_attachment'])
+      open_file_button.grid(column=0, row=1, sticky=EW)
+      save_file_button = ttk.Button(file_control_frame, text='ファイルを保存', command=commands['save_attachment'])
+      save_file_button.grid(column=1, row=1, sticky=EW)
+      file_control_frame.columnconfigure(0, weight=1)
+      file_control_frame.columnconfigure(1, weight=1)
+      file_control_frame.columnconfigure(2, weight=1)
       
-      fileListbox = Listbox(fileListFrame, font=('Yu Gothic UI', 15), listvariable=StringVar(value=tuple(tftr_data.attachments.keys())), activestyle=NONE, selectbackground='skyblue', selectforeground='black', highlightthickness=0)
-      fileListbox.grid(column=0, row=0, sticky=NSEW)
-      fileListScrollbar = ttk.Scrollbar(fileListFrame, orient=VERTICAL, command=fileListbox.yview)
-      fileListScrollbar.grid(column=1, row=0, sticky=NS)
-      fileListbox.config(yscrollcommand=fileListScrollbar.set)
-      fileListbox.bind_all('<MouseWheel>', lambda self: fileListbox.yview_scroll((self.delta < 0) - (self.delta > 0), 'units'))
-      fileListFrame.rowconfigure(0, weight=1)
-      fileListFrame.columnconfigure(0, weight=1)
+      file_listbox = Listbox(file_list_frame, font=('Yu Gothic UI', 15), listvariable=StringVar(value=tuple(tftr_data.attachments.keys())), activestyle=NONE, selectbackground='skyblue', selectforeground='black', highlightthickness=0)
+      file_listbox.grid(column=0, row=0, sticky=NSEW)
+      file_list_scrollbar = ttk.Scrollbar(file_list_frame, orient=VERTICAL, command=file_listbox.yview)
+      file_list_scrollbar.grid(column=1, row=0, sticky=NS)
+      file_listbox.config(yscrollcommand=file_list_scrollbar.set)
+      file_listbox.bind_all('<MouseWheel>', lambda self: file_listbox.yview_scroll((self.delta < 0) - (self.delta > 0), 'units'))
+      file_list_frame.rowconfigure(0, weight=1)
+      file_list_frame.columnconfigure(0, weight=1)
     case State.VIEW:
-      contentText = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
-      contentText.insert('1.0', tftr_data.content)
-      contentText.config(state='disabled')
-      contentText.grid(column=0, row=0, rowspan=3, padx=10, pady=10, sticky=NSEW)
-      replyFrame = ttk.Frame(root)
-      replyFrame.grid(column=1, row=0, padx=10, pady=15, sticky=NSEW)
-      fileControlFrame = Frame(root)
-      fileControlFrame.grid(column=1, row=1, padx=(0, 10), pady=5, sticky=NSEW)
-      fileListFrame = Frame(root)
-      fileListFrame.grid(column=1, row=2, padx=(0, 10), pady=(0, 20), sticky=NSEW)
+      content_text = scrolledtext.ScrolledText(root, font=('Yu Gothic', 12))
+      content_text.insert('1.0', tftr_data.content)
+      content_text.config(state='disabled')
+      content_text.grid(column=0, row=0, rowspan=3, padx=10, pady=10, sticky=NSEW)
+      reply_frame = ttk.Frame(root)
+      reply_frame.grid(column=1, row=0, padx=10, pady=15, sticky=NSEW)
+      file_control_frame = Frame(root)
+      file_control_frame.grid(column=1, row=1, padx=(0, 10), pady=5, sticky=NSEW)
+      file_list_frame = Frame(root)
+      file_list_frame.grid(column=1, row=2, padx=(0, 10), pady=(0, 20), sticky=NSEW)
       root.rowconfigure(2, weight=1)
       root.columnconfigure(0, weight=4)
       root.columnconfigure(1, weight=3, minsize=350)
       
-      openFileButton = ttk.Button(fileControlFrame, text='ファイルを開く', command=commands['open_attachment'])
-      openFileButton.grid(column=0, row=1, sticky=EW)
-      saveFileButton = ttk.Button(fileControlFrame, text='ファイルを保存', command=commands['save_attachment'])
-      saveFileButton.grid(column=1, row=1, sticky=EW)
-      fileControlFrame.columnconfigure(0, weight=1)
-      fileControlFrame.columnconfigure(1, weight=1)
+      open_file_button = ttk.Button(file_control_frame, text='ファイルを開く', command=commands['open_attachment'])
+      open_file_button.grid(column=0, row=1, sticky=EW)
+      save_file_button = ttk.Button(file_control_frame, text='ファイルを保存', command=commands['save_attachment'])
+      save_file_button.grid(column=1, row=1, sticky=EW)
+      file_control_frame.columnconfigure(0, weight=1)
+      file_control_frame.columnconfigure(1, weight=1)
       
-      fileListbox = Listbox(fileListFrame, font=('Yu Gothic UI', 15), listvariable=StringVar(value=tuple(tftr_data.attachments.keys())), activestyle=NONE, selectbackground='skyblue', selectforeground='black', highlightthickness=0)
-      fileListbox.grid(column=0, row=0, sticky=NSEW)
-      fileListScrollbar = ttk.Scrollbar(fileListFrame, orient=VERTICAL, command=fileListbox.yview)
-      fileListScrollbar.grid(column=1, row=0, sticky=NS)
-      fileListbox.config(yscrollcommand=fileListScrollbar.set)
-      fileListbox.bind_all('<MouseWheel>', lambda self: fileListbox.yview_scroll((self.delta < 0) - (self.delta > 0), 'units'))
-      fileListFrame.rowconfigure(0, weight=1)
-      fileListFrame.columnconfigure(0, weight=1)
+      file_listbox = Listbox(file_list_frame, font=('Yu Gothic UI', 15), listvariable=StringVar(value=tuple(tftr_data.attachments.keys())), activestyle=NONE, selectbackground='skyblue', selectforeground='black', highlightthickness=0)
+      file_listbox.grid(column=0, row=0, sticky=NSEW)
+      file_list_scrollbar = ttk.Scrollbar(file_list_frame, orient=VERTICAL, command=file_listbox.yview)
+      file_list_scrollbar.grid(column=1, row=0, sticky=NS)
+      file_listbox.config(yscrollcommand=file_list_scrollbar.set)
+      file_listbox.bind_all('<MouseWheel>', lambda self: file_listbox.yview_scroll((self.delta < 0) - (self.delta > 0), 'units'))
+      file_list_frame.rowconfigure(0, weight=1)
+      file_list_frame.columnconfigure(0, weight=1)

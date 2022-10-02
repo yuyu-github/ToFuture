@@ -26,29 +26,30 @@ def add_attachment(event = None):
     f = open(path, 'rb')
     tftr_data.attachments[filename] = f.read()
     f.close()
-    display.fileListbox.insert(END, filename)
+    display.file_listbox.insert(END, filename)
 
 def delete_attachment(event = None):
-  select: str = display.fileListbox.curselection()
+  select: str = display.file_listbox.curselection()
   if len(select) > 0:
-    tftr_data.attachments.pop(display.fileListbox.get(select[0]))
-    display.fileListbox.delete(ACTIVE)    
+    if messagebox.askyesno(title='確認', message='ファイルを削除しますか？'):
+      tftr_data.attachments.pop(display.file_listbox.get(select[0]))
+      display.file_listbox.delete(ACTIVE)    
 
 def rename_attachment(event = None):
-  select: str = display.fileListbox.curselection()
+  select: str = display.file_listbox.curselection()
   if len(select) > 0:
-    old_name = display.fileListbox.get(select[0])
+    old_name = display.file_listbox.get(select[0])
     new_name = simpledialog.askstring('名前の変更', '新しい名前を入力してください', initialvalue=old_name)
     if new_name != None and new_name != '':
       tftr_data.attachments[new_name] = tftr_data.attachments.pop(old_name)
-      display.fileListbox.insert(select[0], new_name)
-      display.fileListbox.delete(select[0] + 1)
-      display.fileListbox.select_set(select[0])
+      display.file_listbox.insert(select[0], new_name)
+      display.file_listbox.delete(select[0] + 1)
+      display.file_listbox.select_set(select[0])
       
 def save_attachment(event = None):
-  select: str = display.fileListbox.curselection()
+  select: str = display.file_listbox.curselection()
   if len(select) > 0:
-    filename = display.fileListbox.get(select[0])
+    filename = display.file_listbox.get(select[0])
     path = filedialog.asksaveasfilename(initialfile=filename)
     if path != '':
       f = open(path, 'wb')
@@ -56,9 +57,9 @@ def save_attachment(event = None):
       f.close()
 
 def open_attachment(event = None):
-  select: str = display.fileListbox.curselection()
+  select: str = display.file_listbox.curselection()
   if len(select) > 0:
-    fullname = display.fileListbox.get(select[0])
+    fullname = display.file_listbox.get(select[0])
     (name, extentsion) = os.path.splitext(fullname)
     temp_file_name = tempfile.NamedTemporaryFile(prefix=name + '_', suffix=extentsion).name
     f = open(temp_file_name, 'wb')
@@ -109,9 +110,9 @@ def save(event = None):
 
   if state == State.EDIT:
     tftr_data.last_update = datetime.now()
-    tftr_data.edit_deadline = datetime.combine(display.editDeadlineDateEntry.get_date(), time())
-    tftr_data.viewable_date = datetime.combine(display.viewableDateEntry.get_date(), time())
-    tftr_data.content = display.contentText.get("1.0", END)
+    tftr_data.edit_deadline = datetime.combine(display.edit_deadline_date_entry.get_date(), time())
+    tftr_data.viewable_date = datetime.combine(display.viewable_date_entry.get_date(), time())
+    tftr_data.content = display.content_text.get("1.0", END)
     
     for name, path in opened_attachments.items():
       f = open(path, 'rb')
