@@ -18,7 +18,7 @@ state: State = State.START
 tftr_data: TftrData = None
 filepath: str = ''
 
-def add_file(event = None):
+def add_attachment(event = None):
   path = filedialog.askopenfilename(filetypes=[('すべてのファイル', '*.*')])
   filename = os.path.basename(path)
   f = open(path, 'rb')
@@ -26,14 +26,13 @@ def add_file(event = None):
   f.close()
   display.fileListbox.insert(END, filename)
 
-def delete_file(event = None):
+def delete_attachment(event = None):
   select: str = display.fileListbox.curselection()
   if len(select) > 0:
     tftr_data.files.pop(display.fileListbox.get(select[0]))
-    display.fileListbox.delete(ACTIVE)
-    
+    display.fileListbox.delete(ACTIVE)    
 
-def rename_file(event = None):
+def rename_attachment(event = None):
   select: str = display.fileListbox.curselection()
   if len(select) > 0:
     old_name = display.fileListbox.get(select[0])
@@ -43,6 +42,18 @@ def rename_file(event = None):
       display.fileListbox.insert(select[0], new_name)
       display.fileListbox.delete(select[0] + 1)
       display.fileListbox.select_set(select[0])
+      
+def save_attachment(event = None):
+  select: str = display.fileListbox.curselection()
+  if len(select) > 0:
+    filename = display.fileListbox.get(select[0])
+    path = filedialog.asksaveasfilename(initialfile=filename)
+    f = open(path, 'wb')
+    f.write(tftr_data.files[filename])
+    f.close()
+
+def open_attachment(event = None):
+  pass
 
 def create_new(event = None):
   global state
@@ -50,7 +61,8 @@ def create_new(event = None):
 
   tftr_data = load()
   state = State.EDIT
-  update(state, tftr_data, root, {'add_file': add_file, 'delete_file': delete_file, 'rename_file': rename_file})
+  update(state, tftr_data, root, \
+    {'add_attachment': add_attachment, 'delete_attachment': delete_attachment, 'rename_attachment': rename_attachment, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
 
 def open_file(event = None):
   global state
@@ -67,7 +79,7 @@ def open_file(event = None):
     else:
       if datetime.now() <= tftr_data.edit_deadline:
         state = State.EDIT
-        update(state, tftr_data, root, {'add_file': add_file, 'delete_file': delete_file, 'rename_file': rename_file})
+        update(state, tftr_data, root, {'add_file': add_attachment, 'delete_file': delete_attachment, 'rename_file': rename_attachment})
       elif datetime.now() >= tftr_data.viewable_date:
         state = State.VIEW
         update(state, tftr_data, root)
