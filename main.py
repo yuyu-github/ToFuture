@@ -38,6 +38,12 @@ def add_attachment(event = None):
   path = filedialog.askopenfilename(filetypes=[('すべてのファイル', '*.*')])
   if path != '':
     filename = os.path.basename(path)
+    if filename in tftr_data.attachments:
+      [name, ext] = os.path.splitext(filename)
+      num = 2
+      while f'{name} ({num}){ext}' in tftr_data.attachments:
+        num += 1
+      filename = f'{name} ({num}){ext}'
     f = open(path, 'rb')
     tftr_data.attachments[filename] = f.read()
     f.close()
