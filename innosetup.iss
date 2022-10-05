@@ -4,7 +4,7 @@
 #define MyAppName "ToFuture"
 #define MyAppVersion "1.0"
 #define MyAppExeName "main.exe"
-#define MyAppAssocName MyAppName + " File"
+#define MyAppAssocName MyAppName + "�t�@�C��"
 #define MyAppAssocExt ".tftr"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 
@@ -20,7 +20,7 @@ ChangesAssociations=yes
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputBaseFilename=mysetup
+OutputBaseFilename={#MyAppName}-Windows-Installer-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -48,4 +48,3 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
