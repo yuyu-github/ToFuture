@@ -104,6 +104,8 @@ def open_attachment(event = None):
       subprocess.Popen(['start', f.name], shell=True)
     
 def confirm_save():
+  global opened_attachments
+  
   if state == State.START or saved: return True
   
   name = os.path.basename(filepath) if filepath != '' else '新規ファイル'
@@ -113,6 +115,10 @@ def confirm_save():
       answer = None
   if answer == None:
     return False
+  
+  for item in opened_attachments.values(): os.remove(item)
+  opened_attachments = []
+  
   return True
 
 def create_new(event = None):
