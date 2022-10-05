@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "ToFuture"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.0.1"
 #define MyAppExeName "main.exe"
 #define MyAppAssocName MyAppName + "�t�@�C��"
 #define MyAppAssocExt ".tftr"
