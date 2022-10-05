@@ -60,6 +60,10 @@ def rename_attachment(event = None):
     old_name = display.file_listbox.get(select[0])
     new_name = simpledialog.askstring('名前の変更', '新しい名前を入力してください', initialvalue=old_name)
     if new_name != None and new_name != '':
+      if new_name in tftr_data.attachments:
+        messagebox.showerror(title='エラー', message='同じ名前のファイルが既にあります')
+        return
+      
       tftr_data.attachments[new_name] = tftr_data.attachments.pop(old_name)
       display.file_listbox.insert(select[0], new_name)
       display.file_listbox.delete(select[0] + 1)
