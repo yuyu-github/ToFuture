@@ -117,7 +117,7 @@ def confirm_save():
     return False
   
   for item in opened_attachments.values(): os.remove(item)
-  opened_attachments = []
+  opened_attachments = {}
   
   return True
 
