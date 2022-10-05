@@ -92,13 +92,16 @@ def open_attachment(event = None):
   select: str = display.file_listbox.curselection()
   if len(select) > 0:
     fullname = display.file_listbox.get(select[0])
-    (name, extentsion) = os.path.splitext(fullname)
-    temp_file_name = tempfile.NamedTemporaryFile(prefix=name + '_', suffix=extentsion).name
-    f = open(temp_file_name, 'wb')
-    f.write(tftr_data.attachments[fullname])
-    opened_attachments[fullname] = temp_file_name
-    f.close()
-    subprocess.Popen(['start', f.name], shell=True)
+    [name, extentsion] = os.path.splitext(fullname)
+    if fullname in opened_attachments and os.path.isfile(file_name:=opened_attachments[fullname]):
+      subprocess.Popen(['start', file_name], shell=True)
+    else:
+      temp_file_name = tempfile.NamedTemporaryFile(prefix=name + '_', suffix=extentsion).name
+      f = open(temp_file_name, 'wb')
+      f.write(tftr_data.attachments[fullname])
+      opened_attachments[fullname] = temp_file_name
+      f.close()
+      subprocess.Popen(['start', f.name], shell=True)
     
 def confirm_save():
   if state == State.START or saved: return True
