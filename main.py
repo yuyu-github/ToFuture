@@ -191,7 +191,8 @@ def save(event = None):
 def save_as(event = None):
   global filepath
 
-  path = filedialog.asksaveasfilename(filetypes=[('ToFutureファイル', '*.tftr')], defaultextension='tftr')
+  init_file_name = 'To_' + tftr_data.viewable_date.strftime('%Y-%m-%d') + '_From_' + tftr_data.creation_date.strftime('%Y-%m-%d')
+  path = filedialog.asksaveasfilename(filetypes=[('ToFutureファイル', '*.tftr')], defaultextension='', initialfile=init_file_name)
   if path != '':
     filepath = path
     return save()
