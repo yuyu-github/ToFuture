@@ -2,9 +2,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "ToFuture"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.1"
 #define MyAppExeName "main.exe"
-#define MyAppAssocName MyAppName + "ï¿½tï¿½@ï¿½Cï¿½ï¿½"
+#define MyAppAssocName MyAppName + "ƒtƒ@ƒCƒ‹"
 #define MyAppAssocExt ".tftr"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 
