@@ -159,7 +159,7 @@ def open_file(event = None, path = ''):
         update_title()
       elif datetime.now() >= tftr_data.viewable_date:
         state = State.VIEW
-        update(state, tftr_data, root, filepath=filepath, commands={'save_attachment': save_attachment, 'open_attachment': open_attachment})
+        update(state, tftr_data, root, commands={'save_attachment': save_attachment, 'open_attachment': open_attachment})
         set_saved(True)
         update_title()
       else:
