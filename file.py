@@ -12,6 +12,8 @@ def save(tftr_data: TftrData, path: str):
   data += b'\x04' + len(content_bytes).to_bytes(8, 'big') + content_bytes
   data += b'\x05' + len(tftr_data.attachments.keys()).to_bytes(2, 'big') + \
     reduce(lambda a, b: a + b, [len(k.encode('utf-8')).to_bytes(2, 'big') + len(v).to_bytes(8, 'big') + k.encode('utf-8') + v for k, v in tftr_data.attachments.items()], b'')
+  reply_bytes = tftr_data.reply.encode('utf-8')
+  data += b'\x06' + len(reply_bytes).to_bytes(8, 'big') + reply_bytes
   
   f = open(path, 'wb')
   f.write(data)
@@ -68,7 +70,12 @@ def load(path: str = ''):
           attachments[file_name] = file_data
         
         tftr_data.attachments = attachments
+      case 6:
+        size = int.from_bytes(data[i+1:i+9], 'big')
+        i += 9
+        tftr_data.reply = data[i:i+size].decode('utf-8')
+        i += size
       case _:
-        return None
+        return tftr_data
   
   return tftr_data

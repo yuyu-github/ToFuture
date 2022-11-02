@@ -122,6 +122,7 @@ def confirm_save():
   return True
 
 def create_new(event = None):
+  global filepath
   global state
   global tftr_data
 
@@ -132,6 +133,7 @@ def create_new(event = None):
   update(state, tftr_data, root, \
     commands={'set_saved': set_saved, 'add_attachment': add_attachment, 'delete_attachment': delete_attachment, 'rename_attachment': rename_attachment, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
 
+  filepath = ''
   set_saved(False)
   update_title()
 
@@ -159,7 +161,7 @@ def open_file(event = None, path = ''):
         update_title()
       elif datetime.now() >= tftr_data.viewable_date:
         state = State.VIEW
-        update(state, tftr_data, root, commands={'save_attachment': save_attachment, 'open_attachment': open_attachment})
+        update(state, tftr_data, root, commands={'set_saved': set_saved, 'save_attachment': save_attachment, 'open_attachment': open_attachment})
         set_saved(True)
         update_title()
       else:
@@ -182,6 +184,8 @@ def save(event = None):
       f = open(path, 'rb')
       tftr_data.attachments[name] = f.read()
       f.close()
+  elif state == State.VIEW:
+    tftr_data.reply = display.reply_text.get("1.0", END)
   
   result = save_to_file(tftr_data, filepath)
   set_saved(result)
